@@ -2,9 +2,12 @@
 const questionNumText = document.querySelector('#questionNum');
 const questionText = document.querySelector('.question-text');
 const answerText = document.querySelectorAll('.answers');
- const nextBtn = document.querySelector('#btn')
+ const nextBtn = document.querySelector('#btn');
+ const submitBtn = document.querySelector('#submit-btn');
 
 // primitive variables
+let scoreTxt = "";
+let currentScore = 0 //new
 let currentQuestion = 0;
 let userAnswers = [];
 // reference variables
@@ -25,6 +28,7 @@ const correctAnswers = ["Bethlaham", "66", "Genesis"];
 loadQuestion(currentQuestion);
 //misc
 nextBtn.style.cursor = "not-allowed";
+submitBtn.style.cursor = "not-allowed"
  //move this to answer choice func
 
 
@@ -32,45 +36,64 @@ nextBtn.style.cursor = "not-allowed";
 
 
  //function calls
-answerChoice(currentQuestion)
-
-
-
+answerChoice() //new
 nextBtn.addEventListener('click', nextQuestion);
 
 
-function answerChoice(cq){
-    answerText.forEach((answer) =>{
-        answer.addEventListener('click', ()=>{
-            correctAnswer(currentQuestion);
 
-            nextBtn.style.cursor = "pointer";
-            nextBtn.setAttribute("class", "deny-btn btn")
-        })
-    })
 
-    
+
+function finalQuestion(){ //new
+    //display the submit btn
+  
+    submitBtn.style.cursor = "pointer";
+    submitBtn.setAttribute("class", "active-btn btn")
+    submitBtn.setAttribute("href", "final.html")
+
+    //submit the results
+    scoreTxt =  `${currentScore} / ${questions.length}`
+    localStorage.setItem('scoreTxt', scoreTxt)
 }
 
-function nextQuestion(){
-    currentQuestion++;
-    loadQuestion(currentQuestion);
-    resetAnswer(currentQuestion)
-}
 
 
 //functions
+function answerChoice(){ //new
+    answerText.forEach((answer, index) =>{
+        answer.addEventListener('click', ()=>{
+            correctAnswer(currentQuestion,index);
 
-//corrct answer
-function correctAnswer(cq){
-    // loop current questions
-    for (let i = 0; i < answers[cq].length; i++) {
-        if (answers[cq][i] === correctAnswers[cq]){
-            answerText[i].style.backgroundColor = "green";
-        }else{
-            answerText[i].style.backgroundColor = "red";
-        }
+            nextBtn.style.cursor = "pointer";
+            nextBtn.setAttribute("class", "active-btn btn")
+        })
+    })
+}
+
+function nextQuestion(){
+    if(currentQuestion < questions.length -1){
+        currentQuestion++;
+        loadQuestion(currentQuestion);
+        resetAnswer(currentQuestion);
+        
+       
+    }else{
+        
+        finalQuestion()
     }
+    
+}
+//this is the first thing before the change of correct answer func
+//corrct answer
+function correctAnswer(cq, selectedAnswerIndex){
+    // loop current questions
+    if (answers[cq][selectedAnswerIndex] === correctAnswers[cq]) {
+        answerText[selectedAnswerIndex].style.backgroundColor = "green";
+        currentScore += 1;
+    } else {
+        answerText[selectedAnswerIndex].style.backgroundColor = "red";
+        
+    }
+
 }
 //reset answer
 function resetAnswer(cq){
@@ -84,12 +107,6 @@ function resetAnswer(cq){
     }
 }
 
-
-
-//next question function
-
-
-
 //load the question function
 function loadQuestion(cq){
     //increment the question number
@@ -101,3 +118,9 @@ function loadQuestion(cq){
         answer.innerText = answers[currentQuestion][index];
     });
 }
+
+
+
+
+
+///score no work
